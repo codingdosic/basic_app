@@ -11,20 +11,32 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    // provider 변수 설정
     final username = context.watch<AppState>().username;
 
     return BaseScaffold(
+
       title: '홈',
+
       currentIndex: 0,
+
+      // 화면 내 컨텐츠
       body: SingleChildScrollView(
+
         padding: const EdgeInsets.all(16),
+
         child: Column(
+
           crossAxisAlignment: CrossAxisAlignment.start,
+
           children: [
+
             Text(
               '안녕하세요, $username 님 👋',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
+
             const SizedBox(height: 20),
 
             const InfoCard(
@@ -33,8 +45,11 @@ class HomePage extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
+            
             CustomButton(
+
               label: '다크모드 전환',
+
               onPressed: () {
                 context.read<AppState>().toggleDarkMode();
               },
