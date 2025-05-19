@@ -1,9 +1,13 @@
+import 'package:basic_app/repositories/mongo_user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../state/app_state.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+
+  const LoginPage({
+    super.key
+  });
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -15,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _idController = TextEditingController();
   final TextEditingController _pwController = TextEditingController();
 
+  MongoUserRepository userRepository = MongoUserRepository();
+
   // 입력 필드 컨트롤러 메모리 해제
   @override
   void dispose() {
@@ -24,18 +30,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // 로그인 처리
-  void _handleLogin() {
-    
-    // 좌우 공백 제거 후 불러오기
-    final username = _idController.text.trim();
-    
-    // 공백 시 종료
-    if (username.isEmpty) return;
+  Future<void> _handleLogin() async {
 
-    // app_state의 변수에 저장
-    context.read<AppState>().setUsername(username);
-    
-    // 현재 화면 종료하고 다음 라우트로 이동
+    await userRepository.handleLogin(context, _idController.text.trim(), _pwController.text.trim());
+
     Navigator.pushReplacementNamed(context, '/home');
   }
 

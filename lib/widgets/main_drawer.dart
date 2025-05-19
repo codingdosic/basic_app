@@ -12,7 +12,7 @@ class MainDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
 
     // provider 변수 설정
-    final username = context.watch<AppState>().username;
+    final userId = context.watch<AppState>().user!.id;
 
     return Drawer(
 
@@ -21,8 +21,8 @@ class MainDrawer extends StatelessWidget {
         // 사용자 정보 헤더
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text(username),
-            accountEmail: Text('$username@example.com'),
+            accountName: Text(userId),
+            accountEmail: Text('$userId@example.com'),
           ),
 
           // 내부 아이템

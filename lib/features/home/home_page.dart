@@ -1,4 +1,12 @@
+import 'package:basic_app/maps/maps_widget.dart';
+import 'package:basic_app/models/customMarker.dart';
+import 'package:basic_app/models/user.dart';
+import 'package:basic_app/repositories/mongo_user_repository.dart';
+import 'package:basic_app/services/user_service.dart';
+import 'package:basic_app/widgets/common/expandable_button.dart';
+import 'package:basic_app/widgets/dialogs/userContentBottomsheet.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../state/app_state.dart';
@@ -6,56 +14,47 @@ import '../../widgets/base_scaffold.dart';
 import '../../widgets/common/info_card.dart';
 import '../../widgets/common/custom_button.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<HomePage> createState() => _HomePageState();
+}
 
-    // provider 변수 설정
-    final username = context.watch<AppState>().username;
+class _HomePageState extends State<HomePage> {
+  GoogleMapController? _googleMapController;
+
+  void _onMapCreated(GoogleMapController controller) {
+    _googleMapController = controller;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = context.watch<AppState>().user;
 
     return BaseScaffold(
-
       title: '홈',
-
       currentIndex: 0,
+      body: Stack(
+        children: [
+          MapsWidget(onMapCreated: _onMapCreated), // 수정: 컨트롤러 콜백 전달
 
-      // 화면 내 컨텐츠
-      body: SingleChildScrollView(
-
-        padding: const EdgeInsets.all(16),
-
-        child: Column(
-
-          crossAxisAlignment: CrossAxisAlignment.start,
-
-          children: [
-
-            Text(
-              '안녕하세요, $username 님 👋',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-
-            const SizedBox(height: 20),
-
-            const InfoCard(
-              title: '오늘의 공지사항',
-              content: '앱의 새로운 기능이 추가되었습니다! 설정에서 확인해보세요.',
-            ),
-
-            const SizedBox(height: 20),
-            
-            CustomButton(
-
-              label: '다크모드 전환',
-
-              onPressed: () {
-                context.read<AppState>().toggleDarkMode();
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: ExpandableButton(
+              onBtn1: () {
+                context.read<AppState>().toggleMarkerAddMode();
+              },
+              onBtn2: () {},
+              onBtn3: () {
+                if (_googleMapController != null && user != null) {
+                  showUserContentBottomSheet(context, user, _googleMapController!);
+                }
               },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
